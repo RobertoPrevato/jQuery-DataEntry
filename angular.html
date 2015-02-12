@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<!--
+/*
+ * jQuery-DataEntry Plugin Demo 1.0.0
+ * https://github.com/RobertoPrevato/jQuery-DataEntry
+ *
+ * Copyright 2015, Roberto Prevato
+ * http://ugrose.com
+ *
+ * Licensed under the MIT license:
+ * http://www.opensource.org/licenses/MIT
+ */
+-->
+<html lang="en" ng-app="ug" ng-strict-di>
+<head>
+	<!-- Force latest IE rendering engine or ChromeFrame if installed -->
+	<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><![endif]-->
+	<meta charset="utf-8">
+	<title>jQuery-DataEntry Angular</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="description" content="Forms validation plugin that supports AJAX requests, automatically marking of fields in valid/invalid/information state, localized error messages. Integrable with Angular, Backbone, Knockout." />
+	<meta name="copyright" content="Copyright 2015 Roberto Prevato roberto.prevato@gmail.com" />
+	<!-- Bootstrap styles -->
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css">
+	<!-- Generic page styles -->
+  <link rel="stylesheet" href="styles/styles.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon" />
+</head>
+<body>
+  <header>
+    <h1 class="title">jQuery-DataEntry - Angular</h1>
+  </header>
+  <div id="main">
+		<hr />
+		<ul class="nav nav-tabs">
+			<li role="presentation"><a href="index.html">Basic</a></li>
+			<li role="presentation" class="active"><a href="angular.html">Angular</a></li>
+			<li role="presentation"><a href="knockout.html">Knockout</a></li>
+		</ul>
+    <div id="partial" appear ng-controller="demo">
+      <div class="detail-view" ng-if="!editing">
+        <dl>
+          <dt>Name</dt>
+          <dd>{{person.name}}</dd>
+          <dt>Age</dt>
+          <dd>{{person.age}}</dd>
+          <dt>Favorite band</dt>
+          <dd>{{person.favoriteBand}}</dd>
+        </dl>
+        <div class="buttons">
+          <button class="btn" ng-click="edit()">Edit</button>
+        </div>
+      </div>
+      <div ng-if="editing">
+        <form dataentry class="inline-labels" autocomplete="off">
+          <fieldset>
+            <label for="name">Name</label>
+            <input id="name" type="text" name="name" ng-model="personEdit.name" /><br />
+
+            <label for="age">Age</label>
+            <input id="age" type="text" name="age" ng-model="personEdit.age" /><br />
+
+            <label for="favorite-band">Favorite band</label>
+            <input id="favorite-band" type="text" name="band" ng-model="personEdit.favoriteBand" /><br />
+            <em>Automatic formatting is applied to name and favorite band (trimming, and remotion of multiple spaces).</em>
+          </fieldset>
+          <fieldset class="buttons">
+            <button class="submit btn" ng-click="save()">Save</button>
+            <button class="cancel btn" ng-click="cancel()">Cancel</button>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+    <hr />
+    <div>
+      <h4>Notes:</h4>
+      <ol>
+        <li>External libraries are loaded using <a href="http://en.wikipedia.org/wiki/Content_delivery_network">CDN</a>; if the connection is not stable this demo could stop working.</li>
+        <li>The Year field accepts only the input of integers (this is a constraint automatically set by the DataEntry, for the "integer" validation).</li>
+        <li>Copy-paste is always allowed, and an error is displayed when pasting a text into the Year field.</li>
+        <li>The first invalid field</li>
+      </ol>
+    </div>
+    <hr />
+    <footer>
+      <ul>
+        <li><a href="https://github.com/RobertoPrevato/jQuery-DataEntry">Source code</a></li>
+        <li>Demo built using <a href="http://getbootstrap.com/">Bootstrap</a> and Icons from <a href="http://glyphicons.com/">Glyphicons</a>.</li>
+      </ul>
+    </footer>
+	</div>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/js/bootstrap.min.js"></script>
+	<!-- angular -->
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.12/angular.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.12/angular-route.min.js"></script>
+
+  <!-- utility function for localization -->
+  <script src="scripts/libs/i.js"></script>
+  <script src="scripts/locale/en.js"></script>
+
+	<!-- plugin -->
+	<script src="scripts/libs/jquery-dataentry.js"></script>
+	<script src="scripts/libs/jquery-dataentry-angular.js"></script>
+
+  <!-- angular stuff -->
+  <script src="scripts/examples/angular/app.js"></script>
+  <script src="scripts/examples/angular/controllers/demo.js"></script>
+  <script src="scripts/examples/angular/directives/appear.js"></script>
+  <script src="scripts/examples/angular/directives/focus.js"></script>
+</body>
+</html>

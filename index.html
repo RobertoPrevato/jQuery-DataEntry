@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<!--
+/*
+ * jQuery-DataEntry Plugin Demo 1.0.0
+ * https://github.com/RobertoPrevato/jQuery-DataEntry
+ *
+ * Copyright 2015, Roberto Prevato
+ * http://ugrose.com
+ *
+ * Licensed under the MIT license:
+ * http://www.opensource.org/licenses/MIT
+ */
+-->
+<html lang="en">
+<head>
+	<!-- Force latest IE rendering engine or ChromeFrame if installed -->
+	<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><![endif]-->
+	<meta charset="utf-8">
+	<title>jQuery-DataEntry</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="description" content="Forms validation plugin that supports AJAX requests, automatically marking of fields in valid/invalid/information state, localized error messages. Integrable with Angular, Backbone, Knockout." />
+	<meta name="copyright" content="Copyright 2015 Roberto Prevato roberto.prevato@gmail.com" />
+	<!-- Bootstrap styles -->
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css">
+	<!-- Generic page styles -->
+  <link rel="stylesheet" href="styles/styles.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon" />
+</head>
+<body>
+  <header>
+    <h1 class="title">jQuery-DataEntry</h1>
+  </header>
+  <div id="main">
+		<hr />
+		<ul class="nav nav-tabs">
+			<li role="presentation" class="active"><a href="index.html">Basic</a></li>
+			<li role="presentation"><a href="angular.html">Angular</a></li>
+			<li role="presentation"><a href="knockout.html">Knockout</a></li>
+		</ul>
+		<form id="test-form" method="post" action="?" action="?" autocomplete="off">
+			<fieldset>
+				<legend>Example form (data is not submitted anywhere!)</legend>
+				<label for="name-field">Username</label>
+				<input id="name-field" type="text" name="name" /><br />
+
+				<label for="year-field">Year (between 1900 and 2015)</label>
+				<input id="year-field" type="text" name="year" /><br />
+
+        <label for="only-letters">A field that is not required, but accepts only letters</label>
+        <input id="only-letters" type="text" name="only-letters" /><br />
+
+        <label for="must-check" class="inline">A checkbox that must be checked (policy acceptance)</label>
+        <input id="must-check" type="checkbox" name="policy-read" /><br />
+			</fieldset>
+			<fieldset class="buttons">
+				<button class="submit btn">Submit</button>
+			</fieldset>
+		</form>
+	</div>
+  <hr />
+	<div>
+		<h4>Notes:</h4>
+		<ol>
+      <li>External libraries are loaded using <a href="http://en.wikipedia.org/wiki/Content_delivery_network">CDN</a>; if the connection is not stable this demo could stop working.</li>
+			<li>The Year field accepts only the input of integers (this is a constraint automatically set by the DataEntry, for the "integer" validation).</li>
+			<li>Copy-paste is always allowed, and an error is displayed when pasting a text into the Year field.</li>
+      <li>The first invalid field</li>
+		</ol>
+	</div>
+	<hr />
+	<footer>
+		<ul>
+			<li><a href="https://github.com/RobertoPrevato/jQuery-DataEntry">Source code</a></li>
+			<li>Demo built using <a href="http://getbootstrap.com/">Bootstrap</a> and Icons from <a href="http://glyphicons.com/">Glyphicons</a>.</li>
+		</ul>
+	</footer>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+	<!--libraries setup-->
+	<script src="scripts/setup.js"></script>
+
+	<!-- utility function for localization -->
+	<script src="scripts/libs/i.js"></script>
+	<script src="scripts/locale/en.js"></script>
+
+	<!-- jquery dataentry -->
+	<script src="scripts/libs/jquery-dataentry.js"></script>
+  <script>
+	+function () {
+
+		//set schema manually - using only jQuery
+		var form = $("#test-form");
+		//define the data entry
+		var dataentry = new $.Forms.DataEntry({
+			$el: form,
+			//defines the validation, formatting and constraints schema
+			schema: {
+				name: {
+					validation: ["required"],
+					format: ["cleanSpaces"]
+				},
+				year: {
+					validation: ["required", { name: "integer", params: [{ min: 1900, max: 2015 }] }]
+				},
+        "only-letters": {
+          validation: ["letters"]
+        },
+        "policy-read": {
+          validation: ["mustCheck"]
+        }
+			}
+		});
+		//trigger focus on the first input field
+		form.find(":input:first").trigger("focus");
+
+    /*
+    Default form submission is already automatically prevented inside the DataEntry logic;
+    To avoid this behavior, override the $.Forms.DataEntry.prototype.checkElement function to be an empty function;
+
+		form.on("submit", function (e) {
+			e.preventDefault();
+		});
+    */
+		form.find(".submit").on("click", function (e) {
+
+			//validate
+			dataentry.validate()
+			.done(function (data) {
+
+				//do something with data :)
+				console.log("The data is valid!", data);
+
+			}).fail(function () {
+				//the form contains error; the errors are displayed internally by the dataentry
+			});
+		});
+
+	}();
+	</script>
+</body>
+</html>

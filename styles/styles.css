@@ -1,0 +1,64 @@
+body {
+	padding: 30px;
+}
+
+.inline {
+  display: inline;
+}
+dl {
+  padding: 20px 20px 0px 10px;
+}
+dl dt {
+  float: left;
+  width: 120px;
+}
+dl dd {
+  height: 35px;
+}
+
+#partial {
+  visibility: hidden;
+}
+
+form.inline-labels label {
+  display: inline-block;
+  min-width: 120px;
+}
+
+fieldset {
+  padding: 15px;
+}
+
+fieldset.buttons {
+  padding-left: 0px;
+  margin: 0px 10px;
+  border-top: 1px solid #e5e5e5;
+}
+
+div.buttons {
+  padding: 13px 15px 15px 0px;
+  margin: 0px 10px;
+  border-top: 1px solid #e5e5e5;
+}
+
+input[type="checkbox"] {
+  margin: 0px 10px;
+}
+
+em {
+  color: coral;
+}
+/*
+.ui-field-invalid {
+  background-color: #fd9 !important;
+  border: 1px red inset !important;
+}
+*/
+.validation-tooltip .tooltip-inner {
+  color: #fff;
+  background-color: rgb(170, 0, 0);
+}
+
+.validation-tooltip.right .tooltip-arrow {
+  border-right-color: rgb(170, 0, 0);
+}
