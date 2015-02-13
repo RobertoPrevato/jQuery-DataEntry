@@ -1,10 +1,5 @@
 # jQuery-DataEntry
-Forms validation plugin that supports AJAX requests, automatically marking of fields in valid/invalid/information state, localized error messages. Integrable with Angular, Backbone, Knockout.
-
---------------
-
-Client side validation can be a nightmare. Validation usually involves both synchronous and asynchronous operations, and writing specific code for each form leads to code that is hard to maintain and contains repetition.
-jQuery-DataEntry plugin offers a level of abstraction, allowing the developer to define validation rules, and a validation schema.
+Forms validation plugin that supports AJAX requests, automatic decoration of fields, localized error messages. Integrable with Angular, Backbone, Knockout.
 
 **Dependencies**:
 - jQuery
@@ -13,11 +8,16 @@ jQuery-DataEntry plugin offers a level of abstraction, allowing the developer to
 **Features**:
 - Provides a way to implement form validation with little coding
 - Provides a structure to manage the client side validation at application level: keeping it consistent in every form
-- Provides a flexible way to define validation that require AJAX calls
-- Automatic logic to display error messages;
+- Provides a flexible way to define validation rules, also involving AJAX calls or other asynchronous operations
+- Automatic field decoration
 - Automatic formatting logic
 - Automatic constraints logic
 - Connectors for Angular and Knockout
+- Easily customizable
+
+**Examples**:
+- Simply download the code and open the index.html in a browser (they don't require a local web server)
+- External libraries are loaded using CDN
 
 
 
