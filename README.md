@@ -3,7 +3,7 @@ Forms validation plugin that supports AJAX requests, automatic decoration of fie
 
 **Dependencies**:
 - jQuery
-- UnderscoreJs/Lodash
+- Underscore.js/Lodash
 
 **Features**:
 - Provides a way to implement form validation with little coding
@@ -16,7 +16,7 @@ Forms validation plugin that supports AJAX requests, automatic decoration of fie
 - Easily customizable
 
 **Examples**:
-- Simply download the code and open the index.html in a browser (they don't require a local web server)
+- Simply download the code and open the index.html in a browser (examples don't require a local web server)
 - External libraries are loaded using CDN
 
 

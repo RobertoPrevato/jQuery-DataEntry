@@ -1,5 +1,5 @@
 /*
- * jQuery-DataEntry, forms validation plugin that easily supports AJAX requests, automatical marking of fields in valid/invalid/information state, localized error messages.
+ * jQuery-DataEntry, forms validation plugin that supports AJAX requests, automatic decoration of fields, localized error messages.
  * https://github.com/RobertoPrevato/jQuery-DataEntry
  *
  * Copyright 2015, Roberto Prevato
