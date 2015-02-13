@@ -147,13 +147,13 @@
 
 		markFieldInvalid: function (f, options) {
 			f = this.__checkChosen(f);
-      f.removeClass('ui-field-valid ui-field-info').addClass('ui-field-invalid');
+			f.removeClass('ui-field-valid ui-field-info').addClass('ui-field-invalid');
 			return this.showLabel(f, options.message || I.t('errors.valueIsInvalid'), options, "validation-tooltip");
 		},
 
 		markFieldInfo: function (f, options) {
 			f = this.__checkChosen(f);
-      f.removeClass('ui-field-valid ui-field-invalid').addClass('ui-field-info');
+			f.removeClass('ui-field-valid ui-field-invalid').addClass('ui-field-info');
 			return this.showLabel(f, options.message, options, "information-tooltip");
 		},
 
@@ -331,11 +331,11 @@
 			return true;
 		},
 
-    digits: function (e, c) {
-      var c = e.keyCode ? e.keyCode : e.charCode, key = String.fromCharCode(c);
-      if (!permittedCharacters(e, c) && !key.match(/\d/)) return false;
-      return true;
-    }
+		digits: function (e, c) {
+			var c = e.keyCode ? e.keyCode : e.charCode, key = String.fromCharCode(c);
+			if (!permittedCharacters(e, c) && !key.match(/\d/)) return false;
+			return true;
+		}
 
 	};
 
@@ -382,8 +382,8 @@
 				deferred: true, //validation is server side
 				fn: function (field, value, forced, data) {
 					if (!data) throw 'missing options';
-					var filterValue = data.filterValue || "";
-					if (_.isFunction(filterValue)) filterValue = filterValue.call(this, field, value);
+					var filter = data.filter || "";
+					if (_.isFunction(filter)) filter = filter.call(this, field, value);
 					_.each(["value"]);
 					var d = new $.Deferred();
 					$.ajax({
@@ -392,11 +392,16 @@
 						data: {
 							field: field.attr('name'),
 							value: value,
-							filterValue: filterValue
+							filter: filter
 						},
 						//to keep reference to field
 						context: field
 					}).done(function (data) {
+						//support the response to be a boolean
+						if (data === true)
+							return d.resolveWith(field, [{ field: field }]);
+						if (data === false)
+							data = { error: true };
 						data.field = field;
 						if (data.error) {
 							data.message = I.t("errors.valueAlreadyTaken")
@@ -424,35 +429,35 @@
 					if (!value) return true;
 					if (!/^\d+$/.test(value))
 						return getError(I.t('errors.notInteger'), arguments);
-						
+
 					if (options) {
 						var intVal = parseInt(value);
-						if (options.min && intVal < options.min)
+						if (_.isNumber(options.min) && intVal < options.min)
 							return getError(I.t('errors.minValue', options), arguments);
-						if (options.max && intVal > options.max)
+						if (_.isNumber(options.max) && intVal > options.max)
 							return getError(I.t('errors.maxValue', options), arguments);
 					}
 					return true;
 				}
 			},
 
-      letters: {
-        fn: function (field, value, forced) {
-          if (!value) return true;
-          if (!/^[a-zA-Z]+$/.test(value))
-            return getError(I.t('errors.canContainOnlyLetters'), arguments);
-          return true;
-        }
-      },
+			letters: {
+				fn: function (field, value, forced) {
+					if (!value) return true;
+					if (!/^[a-zA-Z]+$/.test(value))
+						return getError(I.t('errors.canContainOnlyLetters'), arguments);
+					return true;
+				}
+			},
 
-      digits: {
-        fn: function (field, value, forced) {
-          if (!value) return true;
-          if (!/^\d+$/.test(value))
-            return getError(I.t('errors.canContainOnlyDigits'), arguments);
-          return true;
-        }
-      },
+			digits: {
+				fn: function (field, value, forced) {
+					if (!value) return true;
+					if (!/^\d+$/.test(value))
+						return getError(I.t('errors.canContainOnlyDigits'), arguments);
+					return true;
+				}
+			},
 
 			maxLength: {
 				fn: function (field, value, forced, limit) {
@@ -470,14 +475,14 @@
 				}
 			},
 
-      mustCheck: {
-        fn: function (field, value, forced, limit) {
-          var element = field.get(0);
-          if (!element.checked)
-            return getError(I.t('errors.mustBeChecked'), arguments);
-          return true;
-        }
-      }
+			mustCheck: {
+				fn: function (field, value, forced, limit) {
+					var element = field.get(0);
+					if (!element.checked)
+						return getError(I.t('errors.mustBeChecked'), arguments);
+					return true;
+				}
+			}
 		},
 		GetError: getError
 	};
@@ -682,7 +687,7 @@
 
 	// Default harvester: it gets values from input elements by their name property; matching the name in model schema and html name attributes
 	// Currently it is the only supported harvester; in the future it could be interesting to create a ContextHarvester, that reads the value from the model (Angular or Knockout); anyway some reference to the DOM elements is needed to display error messages.
-	var DomHarvester = $.Forms.Harvesting.DomHarvester = function (dataentry) { 
+	var DomHarvester = $.Forms.Harvesting.DomHarvester = function (dataentry) {
 		this.$el = dataentry.$el;
 	};
 	_.extend(DomHarvester.prototype, {
@@ -784,19 +789,19 @@
 
 		formatterClass: Formatter,
 
-    /**
+		/**
      * If the bound element is a form, prevents its submission by default
      * @returns {$.Forms.DataEntry}
      */
-    checkElement: function () {
-      if (this.$el && /form/i.test(this.$el.get(0).tagName))
-        this.$el.on("submit", function (e) {
-          e.preventDefault();
-        });
-      return this;
-    },
+		checkElement: function () {
+			if (this.$el && /form/i.test(this.$el.get(0).tagName))
+				this.$el.on("submit", function (e) {
+					e.preventDefault();
+				});
+			return this;
+		},
 
-    /**
+		/**
      * Initializes the validator and formatter objects of this DataEntry
      * @returns {$.Forms.DataEntry}
      */
@@ -811,7 +816,7 @@
 			this.fn = {};
 			//apply automatic event handlers if this.$el is defined
 			if (this.$el) this.bindEvents();
-      return this;
+			return this;
 		},
 
 		/**
@@ -839,14 +844,14 @@
 				def.resolveWith(context, [dataentry.harvester.getValues()]);
 			}, function (errors) {
 				//fail callback
-        //focus the first invalid field
-        errors[0].field.trigger("focus");
+				//focus the first invalid field
+				errors[0].field.trigger("focus");
 				def.rejectWith(context, []);
 			});
 			return def.promise();
 		},
 
-    /**
+		/**
      * Validates the fields defined in the schema of this DataEntry, synchronously (throws exception if any validation rule requires asynchronous operations)
      * @param fields {array} [null] optionally, defines the fields to be validated
      * @returns {boolean}
