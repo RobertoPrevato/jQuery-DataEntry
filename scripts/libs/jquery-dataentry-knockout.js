@@ -1,4 +1,4 @@
-/*
+/**
  * jQuery-DataEntry Knockout connector.
  * https://github.com/RobertoPrevato/jQuery-DataEntry
  *

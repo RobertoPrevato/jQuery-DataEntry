@@ -35,6 +35,18 @@ fieldset.buttons {
   border-top: 1px solid #e5e5e5;
 }
 
+legend {
+  margin-bottom: 0px;
+}
+
+.links {
+  margin-top: 20px;
+}
+
+h3 .glyphicon {
+  margin-left: 20px;
+}
+
 div.buttons {
   padding: 13px 15px 15px 0px;
   margin: 0px 10px;
@@ -61,4 +73,13 @@ em {
 
 .validation-tooltip.right .tooltip-arrow {
   border-right-color: rgb(170, 0, 0);
+}
+pre {
+  padding: 0px;
+  margin: 0px
+  border: none;
+  background-color: none;
+}
+code {
+  font-size: 16px;
 }

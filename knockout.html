@@ -33,9 +33,10 @@
   <div id="main">
 		<hr />
 		<ul class="nav nav-tabs">
-			<li role="presentation"><a href="index.html">Home</a></li>
+			<li role="presentation"><a href="index.html">Basic</a></li>
 			<li role="presentation"><a href="angular.html">Angular</a></li>
 			<li role="presentation" class="active"><a href="knockout.html">Knockout</a></li>
+			<li role="presentation"><a href="examples.html">Examples</a></li>
 		</ul>
     <div id="partial" data-bind="appear">
       <!-- ko if: !editing() -->
@@ -170,7 +171,7 @@
 
 		//apply binding
 		ko.applyBindings(instance, document.getElementById("partial"));
-		
+
 	}();
 	</script>
 </body>

@@ -1,4 +1,4 @@
-/*
+/**
  * jQuery-DataEntry Angular connector.
  * https://github.com/RobertoPrevato/jQuery-DataEntry
  *

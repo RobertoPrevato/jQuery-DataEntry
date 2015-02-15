@@ -10,8 +10,6 @@
  */
 
 +function ($, _) {
-	if (!$ || !_) throw new Error("jQuery-DataEntry plugin requires jQuery and UnderscoreJs/Lodash libraries");
-
 	//utility for localization strategy
 	if (!window["I"]) window["I"] = { t: function (key, options) { return key; } };
 
