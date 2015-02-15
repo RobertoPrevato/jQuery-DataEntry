@@ -46,6 +46,7 @@
       <li><a href="#custom-rule">Defining a custom validation rule.</a></li>
       <li><a href="#ajax-rule">AJAX validation rule</a></li>
       <li><a href="#custom-marker">Defining a custom Marker, to modify how the error messages are displayed on fields.</a></li>
+      <li><a href="#context-harvester">Reading the form values from the model, rather than from the input elements.</a></li>
     </ol>
 
     <h3 id="dynamic-validation">Dynamic validation.</h3>
@@ -176,6 +177,17 @@
 
       //set as marker type for the validator
       $.Forms.Validation.Validator.prototype.markerType = MyCustomMarker;
+    </code></pre>
+
+    <h3 id="context-harvester">Reading the form values from the model, rather than from the input elements.</h3>
+    <pre><code class="js">
+      //1. Set the default harvester type to be ContextHarvester (once)
+      $.Forms.DataEntry.prototype.harvesterType = $.Forms.Harvesting.ContextHarvester;
+
+      //2. In each object where a schema is defined, define a method called "dataentryObjectGetter" that returns the object from which values should be read
+      dataentryObjectGetter: function () {
+        return this.personEdit;
+      }
     </code></pre>
 	</div>
   <hr />

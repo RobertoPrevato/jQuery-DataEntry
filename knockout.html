@@ -156,7 +156,13 @@
           validation: ["none"],
           format: ["cleanSpaces"]
         }
+      }/*,
+
+      //Example: if it desired to read the values from the model, uncomment the following 3 lines
+      dataentryObjectGetter: function () {
+        return this.personEdit;
       }
+      */
     });
 
     //create instance of view model
@@ -168,6 +174,9 @@
       },
       editing: false
     });
+
+    //Example: if it desired to read the values from the model, uncomment the following line, to use the ContextHarvester
+    //$.Forms.DataEntry.prototype.harvesterType = $.Forms.Harvesting.ContextHarvester;
 
 		//apply binding
 		ko.applyBindings(instance, document.getElementById("partial"));

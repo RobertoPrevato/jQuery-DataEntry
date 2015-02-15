@@ -1,4 +1,4 @@
-/*
+/**
  * jQuery-DataEntry, forms validation plugin that supports AJAX requests, automatic decoration of fields, localized error messages.
  * https://github.com/RobertoPrevato/jQuery-DataEntry
  *
@@ -416,7 +416,7 @@
 
 			required: {
 				fn: function (field, value, forced) {
-					if (!value || !!value.match(/^\s+$/))
+					if (!value || !!value.toString().match(/^\s+$/))
 						return getError(I.t('errors.emptyValue'), arguments);
 					return true;
 				}
@@ -683,8 +683,7 @@
 	//
 	$.Forms.Harvesting = {};
 
-	// Default harvester: it gets values from input elements by their name property; matching the name in model schema and html name attributes
-	// Currently it is the only supported harvester; in the future it could be interesting to create a ContextHarvester, that reads the value from the model (Angular or Knockout); anyway some reference to the DOM elements is needed to display error messages.
+	// Default harvester: it gets values from input elements by their name property; matching the name in model schema and html name attributes.
 	var DomHarvester = $.Forms.Harvesting.DomHarvester = function (dataentry) {
 		this.$el = dataentry.$el;
 	};
@@ -699,19 +698,19 @@
 		//simple function that gets values from each input inside an element, in form of dictionary
 		//name property is required to get a value from an input, elements with class 'ui-silent' are discarded
 		getValuesFromElement: function (el) {
-			var o = {}, view = this;
+			var o = {}, harvester = this;
 			if (!el) el = this.$el;
 			el.find(':input').each(function () {
 				var input = $(this), name = input.attr('name');
 				if (name && !input.hasClass('ui-silent')) {
-					o[name] = view.getValueFromElement(input);
+					o[name] = harvester.getValueFromElement(input);
 				}
 			});
 			return o;
 		},
 
 		getValueFromElement: function (input) {
-			var name = input.attr('name'), schema = this.schema;
+			var name = input.attr('name');
 			if (name && !input.hasClass('ui-silent')) {
 				var val = null;
 				switch (input.attr('type')) {
@@ -719,9 +718,6 @@
 						val = input.get(0).checked;
 						break;
 					default:
-						if (schema && schema.hasOwnProperty(name) && schema[name].valueGetter)
-							//support a value getter for a specifi element
-							return schema[name].valueGetter.apply(this, [input]);
 						//if datepicker, return the date from jQuery datepicker
 						var p = "datepicker";
 						if (input.data(p))
@@ -737,22 +733,57 @@
 			}
 		},
 
-		getField: function (name) {
-			if (!name) throw 'missing name';
-			return this.$el.find('[name="' + name + '"]');
-		},
-
 		getFieldValue: function (name) {
 			if (!name) throw 'missing name';
 			return this.getValueFromElement(this.$el.find('[name="' + name + '"]'));
 		},
 
 		filterValues: function (val) {
-			if (val.match(/^[\d\,\.\s]+$/))
+			if (val.match(/^[\d,\.\s]+$/))
 				return parseFloat(val.replace(/\s/g, ""));
 			return val;
 		}
 
+	});
+
+	//Context harvester: it reads values from an object, by their name; matching the name in model schema and object properties.
+	var ContextHarvester = $.Forms.Harvesting.ContextHarvester = function (dataentry) {
+		this.dataentry = dataentry;
+		if (!dataentry.context || !dataentry.context.dataentryObjectGetter)
+			throw new Error("Missing dataentryObjectGetter function in dataentry context. When using a ContextHarvester, is necessary to specify a function that returns the form object.");
+	};
+	_.extend(ContextHarvester.prototype, {
+
+		getValues: function () {
+			//base function that returns values from this context
+			return this.getValuesFromContext(this.getContext());
+		},
+
+		//returns the object from which to read the values
+		getContext: function () {
+			var ctx = this.dataentry.context.dataentryObjectGetter();
+			return _.isFunction(ctx) ? ctx() : ctx;
+		},
+
+		//simple function that gets values from each input inside an element, in form of dictionary
+		//name property is required to get a value from an input, elements with class 'ui-silent' are discarded
+		getValuesFromContext: function (context) {
+			var o = {}, schema = this.dataentry.schema, x;
+			for (x in schema) {
+				if (context.hasOwnProperty(x)) {
+					var val = _.isFunction(context[x]) ? context[x]() : context[x];
+					o[x] = val;
+				}
+			}
+			return o;
+		},
+
+		getFieldValue: function (name) {
+			var context = this.getContext();
+			if (context.hasOwnProperty(name))
+				return _.isFunction(context[name]) ? context[name]() : context[name];
+			return null;
+		}
 	});
 
 	//
@@ -849,6 +880,12 @@
 			return def.promise();
 		},
 
+		getFieldValue: function (name, field) {
+			//to not be confused with the harvester get field value: the dataentry is checking if a specific getter function is defined inside the field schema
+			var fieldSchema = this.schema[name];
+			return fieldSchema.valueGetter ? fieldSchema.valueGetter.call(this.context, field) : this.harvester.getFieldValue(name);
+		},
+
 		/**
      * Validates the fields defined in the schema of this DataEntry, synchronously (throws exception if any validation rule requires asynchronous operations)
      * @param fields {array} [null] optionally, defines the fields to be validated
@@ -895,13 +932,13 @@
 				//mark field neutrum before validation
 				this.validator.marker.markFieldNeutrum(field);
 			}
-			var validation = this.getFieldValidationDefinition(this.schema[fieldName].validation);
-
+			var fieldSchema = this.schema[fieldName], validation = this.getFieldValidationDefinition(fieldSchema.validation);
+			var value = this.getFieldValue(fieldName, field);
 			//returns deferred object from validator
 			if (options.decorateField) {
 				var validator = this.validator;
 
-				return this.validator.validate(validation, field, field.val())
+				return this.validator.validate(validation, field, value)
         .done(function () {
         	//success
         	validator.marker.markFieldValid(field);
@@ -918,7 +955,7 @@
 			}
 
 			//return clean deferred with no callbacks
-			return this.validator.validate(validation, field, field.val());
+			return this.validator.validate(validation, field, value);
 		},
 
 		validateFieldSync: function (fieldName, options) {
@@ -938,7 +975,7 @@
 				this.validator.marker.markFieldNeutrum(field);
 			}
 
-			var re = this.validator.validateSync(validation, field, this.getValueFromElement(field), false);
+			var re = this.validator.validateSync(validation, field, this.getFieldValue(fieldName), false);
 
 			if (re === true)
 				this.validator.marker.markFieldValid(field);
@@ -1028,18 +1065,19 @@
 					var f = $(e.target), name = f.attr('name');
 					//mark the field neutrum before validation
 					that.validator.marker.markFieldNeutrum(f);
-					//get validation definition
-					var validation = that.getFieldValidationDefinition(that.schema[name].validation);
+
+					var fieldSchema = that.schema[name], validation = this.getFieldValidationDefinition(fieldSchema.validation);
+					var value = that.getFieldValue(name, f);
 
 					//I can easily pass the whole context as parameter, if needed
-					that.validator.validate(validation, f, f.val(), forced).done(function () {
+					that.validator.validate(validation, f, value, forced).done(function () {
 						//validation succeeded
 						//apply formatters if applicable
 						var format = that.schema[name].format;
 						if (_.isFunction(format)) format = format.apply(that.options.context || that, []);
 						if (format) {
 							for (var i = 0, l = format.length; i < l; i++) {
-								that.formatter.format(format[i], that, f, f.val());
+								that.formatter.format(format[i], that, f, value);
 							}
 						}
 					}).fail(function (data) {
