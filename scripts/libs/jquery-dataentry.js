@@ -53,6 +53,7 @@
 	//support for chosen js when marking invalid fields
 	function checkChosen($el) {
 		//fix for chosen selects
+		if (!$el.length) return $el;
 		var element = $el.get(0);
 		if (/select/i.test(element.tagName) && !$el.is(':visible') && $el.hasClass("chosen-select")) {
 			//replace the element with the chosen element
@@ -874,7 +875,8 @@
 			}, function (errors) {
 				//fail callback
 				//focus the first invalid field
-				errors[0].field.trigger("focus");
+				if (errors[0] && errors[0].field)
+					errors[0].field.trigger("focus");
 				def.rejectWith(context, []);
 			});
 			return def.promise();
