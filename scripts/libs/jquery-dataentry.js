@@ -46,6 +46,8 @@
 	//function that actually completes when all promises complete (unlike $.when)
 	function when(queue, context) {
 		var i = 0, a = [], args = _.toArray(arguments).slice(1, arguments.length), success = true;
+		//sanitize the queue
+		queue = _.reject(queue, function (o) { return !o || !o.done; });
 		var chain = new $.Deferred().progress(function () {
 			i++;
 			if (i == queue.length)
