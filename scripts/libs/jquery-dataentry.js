@@ -43,7 +43,7 @@
 		}
 	};
 
-	//function that actually completes when all promises actually complete (unlike $.when)
+	//function that actually completes when all promises complete (unlike $.when)
 	function when(queue, context) {
 		var i = 0, a = [], args = _.toArray(arguments).slice(1, arguments.length), success = true;
 		var chain = new $.Deferred().progress(function () {
