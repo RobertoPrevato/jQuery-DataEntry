@@ -27,22 +27,54 @@
 			});
 		},
 		trim: function (s) {
-			return s.replace(/^[\s]+|[\s]+$/g, '');
+			return _.isString(s) ? s.replace(/^[\s]+|[\s]+$/g, '') : s;
 		},
 		removeSpaces: function (s) {
-			return s.replace(/\s/g, '');
+			return _.isString(s) ? s.replace(/\s/g, '') : s;
 		},
 		removeMultipleSpaces: function (s) {
-			return s.replace(/\s{2,}/g, ' ');
+			return _.isString(s) ? s.replace(/\s{2,}/g, ' ') : s;
 		},
 		titleCase: function (s) {
-			return s.toLowerCase().replace(/^(.)|\s+(.)/g, function (l) { return l.toUpperCase(); });
+			return _.isString(s) ? s.toLowerCase().replace(/^(.)|\s+(.)/g, function (l) { return l.toUpperCase(); }) : s;
 		},
 		removeLeadingSpaces: function (s) {
-			return s.replace(/^\s+|\s+$/, '');
+			return _.isString(s) ? s.replace(/^\s+|\s+$/, '') : s;
 		}
 	};
 
+	//function that actually completes when all promises actually complete (unlike $.when)
+	function when(queue, context) {
+		var i = 0, a = [], args = _.toArray(arguments).slice(1, arguments.length), success = true;
+		var chain = new $.Deferred().progress(function () {
+			i++;
+			if (i == queue.length)
+				//every single promise completed
+				chain[success ? "resolveWith" : "rejectWith"](context || this, [_.chain(a.sort(function (a, b) { if (a.ix < b.ix) return -1; if (a.ix > b.ix) return 1; return 0; })).map(function (o) { return o.data; }).flatten().value()]);
+		});
+		function setPromise(promise, j) {
+			promise.done(function (data) {
+				a.push({ ix: j, data: data, success: true });
+			});
+			promise.fail(function (data) {
+				a.push({ ix: j, data: Array.prototype.slice.call(arguments), success: false });
+				success = false;
+			});
+			promise.always(function () {
+				chain.notify();
+			});
+		}
+		for (var j = 0, l = queue.length; j < l; j++) {
+			setPromise(queue[j], j);
+		}
+
+		if (!queue.length) {
+			//resolve directly
+			chain.resolveWith(context || this, a);
+		}
+		return chain.promise();
+	};
+	$.Forms.Utils.When = when;
 	//marking: to display information over fields
 	$.Forms.Marking = {};
 
@@ -734,9 +766,9 @@
 			}
 		},
 
-		getFieldValue: function (name) {
+		getFieldValue: function (name, field) {
 			if (!name) throw 'missing name';
-			return this.getValueFromElement(this.$el.find('[name="' + name + '"]'));
+			return this.getValueFromElement(field ? field : this.$el.find('[name="' + name + '"]'));
 		},
 
 		filterValues: function (val) {
@@ -867,17 +899,17 @@
 				if (fields && !_.contains(fields, x)) continue;
 				chain.push(this.validateField(x));
 			}
-			var context = this.options.context || this,
-      dataentry = this;
-			$.when.apply(null, chain).then(function () {
-				//success callback
-				def.resolveWith(context, [dataentry.harvester.getValues()]);
-			}, function (errors) {
-				//fail callback
+			var context = this.options.context || this, dataentry = this;
+			when(chain, context).done(function () {
+				def.resolveWith(this, [dataentry.harvester.getValues()]);
+			}).fail(function (data) {
 				//focus the first invalid field
-				if (errors[0] && errors[0].field)
-					errors[0].field.trigger("focus");
-				def.rejectWith(context, []);
+				if (data && data.length) {
+					var firstInvalid = _.find(data, function (o) { return o.error && o.field; });
+					if (firstInvalid && firstInvalid.field)
+						firstInvalid.field.trigger("focus");
+				}
+				def.rejectWith(this, [data]);
 			});
 			return def.promise();
 		},
@@ -885,7 +917,7 @@
 		getFieldValue: function (name, field) {
 			//to not be confused with the harvester get field value: the dataentry is checking if a specific getter function is defined inside the field schema
 			var fieldSchema = this.schema[name];
-			return fieldSchema.valueGetter ? fieldSchema.valueGetter.call(this.context, field) : this.harvester.getFieldValue(name);
+			return fieldSchema.valueGetter ? fieldSchema.valueGetter.call(this.context, field) : this.harvester.getFieldValue(name, field);
 		},
 
 		/**
@@ -928,36 +960,47 @@
 			if (!this.schema[fieldName] || !this.schema[fieldName].validation)
 				throw this.string.format('Cannot validate field "{0}" because schema object does not contain its definition or its validation definition.', fieldName);
 
-			var field = options.elements ? options.elements : this.$el.find(this.string.format(':input[name="{0}"]', fieldName));
+			var dataentry = this, field = options.elements ? options.elements : this.$el.find(this.string.format(':input[name="{0}"]', fieldName));
 			if (!field.length) return;
 			if (options.decorateField) {
 				//mark field neutrum before validation
 				this.validator.marker.markFieldNeutrum(field);
 			}
-			var fieldSchema = this.schema[fieldName], validation = this.getFieldValidationDefinition(fieldSchema.validation);
-			var value = this.getFieldValue(fieldName, field);
-			//returns deferred object from validator
-			if (options.decorateField) {
-				var validator = this.validator;
+			var fieldSchema = this.schema[fieldName], validation = this.getFieldValidationDefinition(fieldSchema.validation), d = new $.Deferred(), chain = [];
+			//support multiple fields with the same name
+			field.each(function () {
+				var f = $(this), value = dataentry.getFieldValue(fieldName, f);
 
-				return this.validator.validate(validation, field, value)
-        .done(function () {
-        	//success
-        	validator.marker.markFieldValid(field);
-        })
-        .fail(function (arr) {
-        	//arguments is an array of responses
-        	var firstError = _.find(arr, function (o) {
-        		return !!o.message;
-        	});
-        	validator.marker.markFieldInvalid(field, {
-        		message: firstError.message
-        	});
-        });
-			}
+				var promise = null;
+				//returns deferred object from validator
+				if (options.decorateField) {
+					var validator = dataentry.validator;
 
-			//return clean deferred with no callbacks
-			return this.validator.validate(validation, field, value);
+					promise = dataentry.validator.validate(validation, f, value)
+					.done(function () {
+						//success
+						validator.marker.markFieldValid(f);
+					})
+					.fail(function (arr) {
+						//arguments is an array of responses
+						var firstError = _.find(arr, function (o) {
+							return !!o.message;
+						});
+						validator.marker.markFieldInvalid(f, {
+							message: firstError.message
+						});
+					});
+				} else {
+					promise = dataentry.validator.validate(validation, f, value);
+				}
+				chain.push(promise);
+			});
+			when(chain).done(function (data) {
+				d.resolve(data);
+			}).fail(function (data) {
+				d.reject(data);
+			});
+			return d.promise();
 		},
 
 		validateFieldSync: function (fieldName, options) {
