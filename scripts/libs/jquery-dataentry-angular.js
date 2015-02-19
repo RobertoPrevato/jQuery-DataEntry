@@ -34,7 +34,7 @@ angular.module('ug.dataentry', [])
 
     //trigger focus on the first active input element
     _.delay(function () {
-      el.find(":input[type='text']:not(:disabled):not([readonly]):first").trigger('focus');
+      el.find(":input:not(:disabled):not([readonly]):first").trigger('focus');
     }, 200);
 
     //bind event handler to unbind events

@@ -35,7 +35,7 @@ ko.bindingHandlers.dataentry = {
 
 		//trigger focus on the first active input element
 		_.delay(function () {
-			elem.find(":input[type='text']:not(:disabled):not([readonly]):first").trigger('focus');
+			elem.find(":input:not(:disabled):not([readonly]):first").trigger('focus');
 		}, 200);
 
 		ko.utils.domNodeDisposal.addDisposeCallback(element, _.partial(function (model, element) {

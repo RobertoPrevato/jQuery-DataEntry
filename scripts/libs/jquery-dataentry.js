@@ -1144,26 +1144,28 @@
 		},
 
 		getSpecialEvents: function () {
-			return {
-				'keypress :input': function () {
-					//activate validation after keypress
-					this.validationActive = true;
-					return true;
-				},
-				'keydown :input': function () {
-					//activate validation after keydown
-					this.validationActive = true;
-					return true;
-				},
-				'change input[type="checkbox"]': function (e) {
-					//trigger validation
-					var name = e.target.name;
-					if (this.schema.hasOwnProperty(name)) {
-						_.defer(_.bind(function () {
-							this.validateField(name);
-						}, this));
-					}
+			var activationCallback = function () {
+				//activate validation after keypress
+				this.validationActive = true;
+				return true;
+			};
+			var changeCallback = function (e) {
+				this.validationActive = true;
+				//trigger validation
+				var name = e.target.name;
+				if (this.schema.hasOwnProperty(name)) {
+					_.defer(_.bind(function () {
+						this.validateField(name, {
+							elements: $(e.target)
+						});
+					}, this));
 				}
+			};
+			return {
+				'keypress :input': activationCallback,
+				'keydown :input': activationCallback,
+				'change select': changeCallback,
+				'change input[type="checkbox"]': changeCallback
 			};
 		},
 
@@ -1239,13 +1241,8 @@
 			return o;
 		},
 
-		removeValidation: function () {
-			var sel = this.$el.find(this.getSelectorOfValidatedFields());
-			//hide immediately all tooltips
-			sel.each(function () {
-				var t = $(this).data("tooltip");
-				if (t) t.$tip.hide();
-			});
+		removeValidation: function (sel) {
+			if (!sel) sel = this.$el.find(this.getSelectorOfValidatedFields());
 			this.validator.marker.markFieldNeutrum(sel);
 			return this;
 		}
