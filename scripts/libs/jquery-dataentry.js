@@ -241,6 +241,7 @@
 
 	//formatting
 	$.Forms.Formatting = {
+		//formatting rules to apply on blur, after successful validation
 		Rules: {
 			trim: {
 				fn: function (field, value) {
@@ -295,6 +296,25 @@
 					var v = _.map(value.replace(/\s{2,}/g, ' ').replace(/^[\s]+|[\s]+$/g, '').split(/\s/g),
 					function (n) { var m = n.match(/^(.)(.*)/); return m[1].toUpperCase() + m[2].toLowerCase(); });
 					field.val(v.join(' '));
+				}
+			},
+
+			integer: {
+				fn: function (field, value) {
+					if (!value) return;
+					//remove leading zeros
+					if (/^0+/.test(value))
+						field.val(value.replace(/^0+/, ""));
+				}
+			}
+		},
+		//formatting rules to apply on focus, before editing a value
+		PreRules: {
+			integer: {
+				fn: function (field, value) {
+					if (/^0+$/.test(value))
+						//if the value consists of only zeros, empty automatically the field (some users get confused when imputting numbers in a field with 0)
+						field.val("");
 				}
 			}
 		}
@@ -774,8 +794,6 @@
 		},
 
 		filterValues: function (val) {
-			if (val.match(/^[\d,\.\s]+$/))
-				return parseFloat(val.replace(/\s/g, ""));
 			return val;
 		}
 
@@ -836,7 +854,9 @@
 
 		defaults: {
 			//whether to allow implicit constraints by match with validator names, or not
-			allowImplicitConstraints: true
+			allowImplicitConstraints: true,
+			//whether to allow implicit formatting by match with validator names, or not
+			allowImplicitFormat: true
 		},
 
 		harvesterType: DomHarvester,
@@ -1090,6 +1110,7 @@
 			//extends events object with validation events
 			events = _.extend({}, events,
       this.getDynamicValidationDefinition(),
+			this.getDynamicPreFormattingDefinition(),
       this.getSpecialEvents(),
 			this.getDynamicConstraintsDefinition());
 			return events;
@@ -1099,7 +1120,7 @@
 		//which appears inside the schema of this object
 		getDynamicValidationDefinition: function () {
 			if (!this.schema) return {};
-			var o = {}, x, that = this;
+			var o = {}, x, dataentry = this;
 			for (x in this.schema) {
 				var validationEvent = this.schema[x].validationEvent,
         ev = this.string.format('{0} [name="{1}"]', validationEvent || this.validator.ev, x);
@@ -1111,28 +1132,35 @@
 					if (forced == undefined) forced = false;
 					var f = $(e.target), name = f.attr('name');
 					//mark the field neutrum before validation
-					that.validator.marker.markFieldNeutrum(f);
+					dataentry.validator.marker.markFieldNeutrum(f);
 
-					var fieldSchema = that.schema[name], validation = this.getFieldValidationDefinition(fieldSchema.validation);
-					var value = that.getFieldValue(name, f);
+					var fieldSchema = dataentry.schema[name], validation = this.getFieldValidationDefinition(fieldSchema.validation);
+					var value = dataentry.getFieldValue(name, f);
 
 					//I can easily pass the whole context as parameter, if needed
-					that.validator.validate(validation, f, value, forced).done(function () {
+					dataentry.validator.validate(validation, f, value, forced).done(function () {
 						//validation succeeded
 						//apply formatters if applicable
-						var format = that.schema[name].format;
-						if (_.isFunction(format)) format = format.apply(that.options.context || that, []);
+						var name = f.attr('name'), format = dataentry.schema[name].format;
+						if (_.isFunction(format)) format = format.call(dataentry.options.context || dataentry, f, value);
 						if (format) {
 							for (var i = 0, l = format.length; i < l; i++) {
-								that.formatter.format(format[i], that, f, value);
+								dataentry.formatter.format(format[i], dataentry, f, value);
+							}
+						} else if (dataentry.options.allowImplicitFormat) {
+							//apply format rules implicitly
+							for (var i = 0, l = validation.length; i < l; i++) {
+								var name = _.isString(validation[i]) ? validation[i] : validation[i].name;
+								if (name && dataentry.formatter.rules[name])
+									dataentry.formatter.format(name, dataentry, f, value);
 							}
 						}
 					}).fail(function (data) {
 						//validation failed
 						for (var i = 0, l = data.length; i < l; i++) {
 							if (!data[i] || data[i].error) {
-								//mark field invalid on the first validation that failed
-								that.validator.marker.markFieldInvalid(f, {
+								//mark field invalid on the first validation dataentry failed
+								dataentry.validator.marker.markFieldInvalid(f, {
 									message: data[i].message
 								});
 							}
@@ -1141,6 +1169,44 @@
 				};
 			}
 			return o;
+		},
+
+		//gets an "events" object that describes on focus pre formatting events for all input inside the given element
+		getDynamicPreFormattingDefinition: function () {
+			if (!this.schema) return {};
+			var o = {}, x;
+			for (x in this.schema) {
+				//get preformat definition
+				var preformat = this.getFieldPreformatRules(x);
+				if (preformat && preformat.length) {
+					var preformattingEvent = "focus.preformat",
+						ev = this.string.format('{0} [name="{1}"]', preformattingEvent, x);
+					var functionName = 'preformat_' + x;
+					o[ev] = functionName;
+					this.fn[functionName] = function (e, forced) {
+						var $el = $(e.currentTarget), name = $el.attr("name"), preformat = this.getFieldPreformatRules(name);
+						for (var i = 0, l = preformat.length; i < l; i++) {
+							var a = preformat[i], rule = $.Forms.Formatting.PreRules[a];
+							rule.fn.call(this.context || this, $el, $el.val());
+						}
+					};
+				}
+			}
+			return o;
+		},
+
+		getFieldPreformatRules: function (x) {
+			var preformat = this.schema[x].preformat, fieldSchema = this.schema[x];
+			if (!preformat && this.options.allowImplicitFormat && !_.isFunction(fieldSchema.validation)) {
+				preformat = [];
+				var validation = this.getFieldValidationDefinition(fieldSchema.validation);
+				for (var i = 0, l = validation.length; i < l; i++) {
+					var n = validation[i].name || validation[i];
+					if ($.Forms.Formatting.PreRules[n])
+						preformat.push(n);
+				}
+			}
+			return preformat;
 		},
 
 		getSpecialEvents: function () {
