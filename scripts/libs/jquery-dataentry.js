@@ -1291,7 +1291,7 @@
 					var validation = this.schema[x].validation;
 					if (validation) {
 						//implicit constraint
-						if (_.isFunction(validation)) validation = validation.apply(this, []);
+						if (_.isFunction(validation)) validation = validation.apply(this.context || this, []);
 						for (var i = 0, l = validation.length; i < l; i++) {
 							var name = _.isString(validation[i]) ? validation[i] : validation[i].name;
 							if (Constraints.hasOwnProperty(name)) {
