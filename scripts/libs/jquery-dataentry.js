@@ -437,16 +437,17 @@
 					if (!data) throw 'missing options';
 					var filter = data.filter || "";
 					if (_.isFunction(filter)) filter = filter.call(this, field, value);
-					_.each(["value"]);
+					if (data.value)
+						value = data.value;
 					var d = new $.Deferred();
+					var a = {
+						field: field.attr("name"),
+						filter: filter
+					}, p = _.extend(a, _.isObject(value) ? value : { value: value });
 					$.ajax({
 						url: data.url,
 						type: "POST",
-						data: {
-							field: field.attr('name'),
-							value: value,
-							filter: filter
-						},
+						data: p,
 						//to keep reference to field
 						context: field
 					}).done(function (data) {
