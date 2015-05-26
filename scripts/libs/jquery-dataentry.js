@@ -40,6 +40,23 @@
 		},
 		removeLeadingSpaces: function (s) {
 			return _.isString(s) ? s.replace(/^\s+|\s+$/, '') : s;
+		},
+		zeroFill: function (s, l, endOfString) {
+			if (!s) s = "";
+			while (s.length < l)
+				s = endOfString ? s + "0" : "0" + s;
+			return s;
+		},
+		foreseeValue: function (e) {
+			var a = "selectionStart", b = "selectionEnd", element = e.currentTarget, value = element.value, c = e.keyCode ? e.keyCode : e.charCode, key = String.fromCharCode(c),
+					selected = value.substr(element[a], element[b]),
+					beforeSelection = value.substr(0, element[a]),
+					afterSelection = value.substr(element[b], value.length);
+			return [beforeSelection, key, afterSelection].join("");
+		},
+		selectionContains: function (element, portion) {
+			var value = element.value, selected = value.substr(element.selectionStart, element.selectonEnd);
+			return selected[portion instanceof RegExp ? "search" : "indexOf"](portion) > 1;
 		}
 	};
 
