@@ -17,7 +17,7 @@ Forms validation plugin that supports AJAX requests, automatic decoration of fie
 
 **Examples**:
 - Simply download the code and open the index.html in a browser (examples don't require a local web server)
-- External libraries are loaded using CDN
+- External libraries in the demo and examples are loaded using CDN
 
 
 
