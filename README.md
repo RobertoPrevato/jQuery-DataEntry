@@ -1,6 +1,8 @@
 # jQuery-DataEntry
 Forms validation plugin that supports AJAX requests, automatic decoration of fields, localized error messages. Integrable with Angular, Backbone, Knockout.
 
+[Live demo](http://ugrose.com/content/demos/jqdataentry/index.html)
+
 **Dependencies**:
 - jQuery
 - Underscore.js/Lodash
