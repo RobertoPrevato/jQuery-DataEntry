@@ -46,7 +46,7 @@ angular.module('ug.dataentry', [])
   
   return {
     restrict: 'A',
-    rep1ace: false,
+    replace: false,
     link: linker
   };
 }]);

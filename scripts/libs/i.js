@@ -38,7 +38,7 @@ var I = {
 		}
 		if (o) {
 			if (typeof o == 'object') return o;
-			return _.template(o, options);
+			return o;
 		}
 		return ['Missing translation for: ', this.locale, '.', key].join('');
 		this.regional[this.locale][key] || '';
