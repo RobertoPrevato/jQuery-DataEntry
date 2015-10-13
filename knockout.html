@@ -13,18 +13,18 @@
 -->
 <html lang="en" ng-app="ug" ng-strict-di>
 <head>
-	<!-- Force latest IE rendering engine or ChromeFrame if installed -->
-	<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><![endif]-->
-	<meta charset="utf-8">
-	<title>jQuery-DataEntry Knockout</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<meta name="description" content="Forms validation plugin that supports AJAX requests, automatically marking of fields in valid/invalid/information state, localized error messages. Integrable with Angular, Backbone, Knockout." />
-	<meta name="copyright" content="Copyright 2015 Roberto Prevato roberto.prevato@gmail.com" />
-	<!-- Bootstrap styles -->
+  <!-- Force latest IE rendering engine or ChromeFrame if installed -->
+  <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><![endif]-->
+  <meta charset="utf-8">
+  <title>jQuery-DataEntry Knockout</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="description" content="Forms validation plugin that supports AJAX requests, automatically marking of fields in valid/invalid/information state, localized error messages. Integrable with Angular, Backbone, Knockout." />
+  <meta name="copyright" content="Copyright 2015 Roberto Prevato roberto.prevato@gmail.com" />
+  <!-- Bootstrap styles -->
   <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css">
-	<!-- Generic page styles -->
+  <!-- Generic page styles -->
   <link rel="stylesheet" href="styles/styles.css">
-	<link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
 </head>
 <body>
   <header>
@@ -32,13 +32,13 @@
     <h3>forms validation plugin that supports AJAX requests, automatic decoration of fields, localized error messages. Integrable with Angular, Backbone, Knockout.</h3>
   </header>
   <div id="main">
-		<hr />
-		<ul class="nav nav-tabs">
-			<li role="presentation"><a href="index.html">Basic</a></li>
-			<li role="presentation"><a href="angular.html">Angular</a></li>
-			<li role="presentation" class="active"><a href="knockout.html">Knockout</a></li>
-			<li role="presentation"><a href="examples.html">Examples</a></li>
-		</ul>
+    <hr />
+    <ul class="nav nav-tabs">
+      <li role="presentation"><a href="index.html">Basic</a></li>
+      <li role="presentation"><a href="angular.html">Angular</a></li>
+      <li role="presentation" class="active"><a href="knockout.html">Knockout</a></li>
+      <li role="presentation"><a href="examples.html">Examples</a></li>
+    </ul>
     <div id="partial" data-bind="appear">
       <!-- ko if: !editing() -->
       <div class="detail-view">
@@ -94,22 +94,22 @@
       <hr />
       <h6><a href="mailto:roberto.prevato@gmail.com">Roberto Prevato</a></h6>
     </footer>
-	</div>
-	<script src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+  </div>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/js/bootstrap.min.js"></script>
-	<!-- knockout -->
-	<script src="http://cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
+  <!-- knockout -->
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
 
   <!-- utility function for localization -->
   <script src="scripts/libs/i.js"></script>
   <script src="scripts/locale/en.js"></script>
 
-	<!-- plugin -->
-	<script src="scripts/libs/jquery-dataentry.js"></script>
-	<script src="scripts/libs/jquery-dataentry-knockout.js"></script>
+  <!-- plugin -->
+  <script src="scripts/libs/jquery-dataentry.js"></script>
+  <script src="scripts/libs/jquery-dataentry-knockout.js"></script>
   <script>
-	+function () {
+  +function () {
 
     ko.bindingHandlers.appear = {
       init: function (element) {
@@ -181,10 +181,10 @@
     //Example: if it desired to read the values from the model, uncomment the following line, to use the ContextHarvester
     //$.Forms.DataEntry.prototype.harvesterType = $.Forms.Harvesting.ContextHarvester;
 
-		//apply binding
-		ko.applyBindings(instance, document.getElementById("partial"));
+    //apply binding
+    ko.applyBindings(instance, document.getElementById("partial"));
 
-	}();
-	</script>
+  }();
+  </script>
 </body>
 </html>
