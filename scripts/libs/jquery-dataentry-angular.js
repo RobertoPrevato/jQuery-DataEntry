@@ -19,8 +19,8 @@ angular.module('ug.dataentry', [])
     if (scope.dataentry) throw "the scope has already a [dataentry] property. Only one dataentry per scope is supported";
     if (!scope.schema) throw "no schema defined inside the scope";
     
-		// supports only one dataentry per scope
-		scope.dataentry = new $.Forms.DataEntry({
+    // supports only one dataentry per scope
+    scope.dataentry = new $.Forms.DataEntry({
       $el: $(element),
       schema: scope.schema,
       context: scope
