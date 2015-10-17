@@ -12,7 +12,7 @@
 (function ($, _) {
   //utility for localization strategy
   var I;
-  //if I.js is defined; return it.
+  //if I.js is defined; use it.
   //https://github.com/RobertoPrevato/I.js
   if (window["I"]) I = window.I;
   //if i18n is defined; use it.
