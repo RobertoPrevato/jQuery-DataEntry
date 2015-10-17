@@ -9,9 +9,16 @@
  * http://www.opensource.org/licenses/MIT
  */
 
-+function ($, _) {
+(function ($, _) {
   //utility for localization strategy
-  if (!window["I"]) window["I"] = { t: function (key, options) { return key; } };
+  var I;
+  //if I.js is defined; return it.
+  //https://github.com/RobertoPrevato/I.js
+  if (window["I"]) I = window.I;
+  //if i18n is defined; use it.
+  //https://github.com/fnando/i18n-js
+  else if (window["I18n"]) I = window.I18n;
+  else throw "Missing implementation of i18n. Please refer to https://github.com/RobertoPrevato/jQuery-KingTable/wiki/Implementing-localization";
 
   $.Forms = {};
   $.Forms.Version = "1.0.0";
@@ -1366,4 +1373,4 @@
       $.error("Method \"" + method + "\" does not exist on jQuery.dataentry.");
   };
 
-}(jQuery, _);
+})(jQuery, _);
