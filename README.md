@@ -5,11 +5,11 @@ Forms validation plugin that supports AJAX requests, automatic decoration of fie
 
 **Dependencies**:
 - jQuery
-- Underscore.js/Lodash
+- Lodash
 
 **Features**:
 - Provides a way to implement form validation with little coding
-- Provides a structure to manage the client side validation at application level: keeping it consistent in every form
+- Provides a strategy to manage the client side validation at application level: keeping it consistent in every form
 - Provides a flexible way to define validation rules, also involving AJAX calls or other asynchronous operations
 - Automatic field decoration
 - Automatic formatting logic
