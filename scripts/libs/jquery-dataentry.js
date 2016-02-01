@@ -490,9 +490,13 @@
       },
 
       required: {
-        fn: function (field, value, forced) {
+        fn: function (field, value, forced, params) {
+          if (_.isString(params))
+            params = { message: params };
+          var defaults = { message: I.t('errors.emptyValue') },
+            o = _.extend(defaults, params);
           if (!value || !!value.toString().match(/^\s+$/))
-            return getError(I.t('errors.emptyValue'), arguments);
+            return getError(o.message, arguments);
           return true;
         }
       },
