@@ -6,6 +6,7 @@ Forms validation plugin that supports AJAX requests, automatic decoration of fie
 **Dependencies**:
 - jQuery
 - Lodash
+- a library for localization: either [i18n-js](https://github.com/fnando/i18n-js) or [I.js](https://github.com/RobertoPrevato/I.js)
 
 **Features**:
 - Provides a way to implement form validation with little coding
