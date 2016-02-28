@@ -1,5 +1,5 @@
 # jQuery-DataEntry
-Forms validation plugin that supports AJAX requests, automatic decoration of fields, localized error messages. Integrable with Angular, Backbone, Knockout.
+Forms validation plugin that supports AJAX requests, automatic decoration of fields, localized error messages. Integrable with Angular, Backbone, Knockout, [React](https://github.com/RobertoPrevato/jQuery-DataEntry/wiki/Integration-with-ReactJs).
 
 [Live demo](http://ugrose.com/content/demos/jqdataentry/index.html)
 
@@ -14,7 +14,7 @@ Forms validation plugin that supports AJAX requests, automatic decoration of fie
 - Automatic field decoration
 - Automatic formatting logic
 - Automatic constraints logic
-- Connectors for Angular and Knockout
+- Connectors for Angular, Knockout, [React](https://github.com/RobertoPrevato/jQuery-DataEntry/wiki/Integration-with-ReactJs)
 - Easily customizable
 
 **Examples**:
