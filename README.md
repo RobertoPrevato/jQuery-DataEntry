@@ -19,7 +19,7 @@ If the support for older browsers is required, though, the jQuery-DataEntry is s
 **Dependencies**:
 - jQuery
 - Lodash
-- A library for client side localization: either [i18n-js](https://github.com/fnando/i18n-js) or [I.js](https://github.com/RobertoPrevato/I.js)
+- A library for client side localization: either [i18n-js](https://github.com/fnando/i18n-js) or [I.js](https://github.com/RobertoPrevato/I.js) - [instructions are here](https://github.com/RobertoPrevato/jQuery-DataEntry/wiki/Implementing-localization)
 
 **Features**:
 - Provides a way to implement form validation with little coding
