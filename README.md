@@ -16,8 +16,6 @@ The objectives of the jQuery-DataEntry library are:
 A newer implementation of the DataEntry library, independent from jQuery and Lodash, using the ES6 Promise object and targeting newer browsers, is [available here](https://github.com/RobertoPrevato/DataEntry).
 If the support for older browsers is required, though, the jQuery-DataEntry is still recommended, as it delegates to jQuery DOM manipulation logic, Deferred implementation, handling of specific event handling situations.
 
-[Live demo](http://ugrose.com/content/demos/jqdataentry/index.html)
-
 **Dependencies**:
 - jQuery
 - Lodash
@@ -36,6 +34,7 @@ If the support for older browsers is required, though, the jQuery-DataEntry is s
 **Examples**:
 - Simply download the code and open the index.html in a browser (examples don't require a local web server)
 - External libraries in the demo and examples are loaded using CDN
+- [Live demo](http://ugrose.com/content/demos/jqdataentry/index.html)
 
 
 
