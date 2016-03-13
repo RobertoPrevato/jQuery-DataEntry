@@ -2,7 +2,7 @@
 Forms validation plugin that supports AJAX requests, automatic decoration of fields, localized error messages. Integrable with Angular, Backbone, Knockout, [React](https://github.com/RobertoPrevato/jQuery-DataEntry/wiki/Integration-with-ReactJs).
 
 ## Important note: new DataEntry version
-A newer implementation of the DataEntry library, independent from jQuery and Lodash, using the ES6 Promise object and targeting newer browsers, is [available here](https://github.com/RobertoPrevato/DataEntry).
+A newer implementation of the DataEntry library, independent from jQuery and Lodash, using the ES6 Promise object and targeting newer browsers, is [available here](https://github.com/RobertoPrevato/DataEntry). It is recommended to use the new version of the library, since new development from my side is focused on it, and it already features some improvements and improved documentation.
 
 ## Objectives
 The objectives of the jQuery-DataEntry library are:
