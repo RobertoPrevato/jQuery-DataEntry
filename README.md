@@ -27,7 +27,7 @@ The objectives of the jQuery-DataEntry library are:
 - Automatic field decoration
 - Automatic formatting logic
 - Automatic constraints logic
-- Connectors for Angular, Knockout, [React](https://github.com/RobertoPrevato/jQuery-DataEntry/wiki/Integration-with-ReactJs)
+- Connectors for Angular, Knockout, [React](https://github.com/RobertoPrevato/jQuery-DataEntry/wiki/Integration-with-React)
 - Easily customizable
 
 **Examples**:
